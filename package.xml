@@ -2,12 +2,16 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>tf_explorer</name>
-  <version>1.0.0</version>
-  <description>TF Transform Explorer - Learning TF2, Nav2, SLAM, RViz</description>
+  <version>1.1.0</version>
+  <description>TF Transform Explorer - Learning TF2, Nav2, SLAM, Custom Plugins</description>
   <maintainer email="dev@example.com">Developer</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <depend>rclcpp</depend>
   <depend>tf2</depend>
@@ -17,6 +21,12 @@
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>visualization_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>rclcpp_action</depend>
+  <depend>nav2_msgs</depend>
+
+  <depend>nav2_costmap_2d</depend>
+  <depend>pluginlib</depend>
 
   <exec_depend>turtlebot3_gazebo</exec_depend>
   <exec_depend>turtlebot3_navigation2</exec_depend>

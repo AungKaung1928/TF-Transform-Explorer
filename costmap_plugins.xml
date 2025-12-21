@@ -1,0 +1,7 @@
+<library path="keepout_layer">
+  <class type="tf_explorer::KeepoutLayer" base_class_type="nav2_costmap_2d::Layer">
+    <description>
+      Simple keepout zone layer that marks a rectangular area as impassable.
+    </description>
+  </class>
+</library>
