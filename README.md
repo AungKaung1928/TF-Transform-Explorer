@@ -218,5 +218,3 @@ killall -9 gzserver gzclient
 **Robot not moving:**
 - Wait 15+ seconds for Nav2 to fully activate
 - Check patrol_node is running: `ros2 node list | grep patrol`
-
----
