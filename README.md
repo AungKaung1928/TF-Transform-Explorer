@@ -1,6 +1,6 @@
 # TF Transform Explorer
 
-A ROS2 TF2 project demonstrating TF2 transforms, SLAM mapping, Nav2 autonomous navigation, custom message types, and Nav2 plugin development using TurtleBot3 Waffle in Gazebo.
+A ROS2 robotics project demonstrating TF2 transforms, SLAM mapping, Nav2 autonomous navigation, custom message types, and Nav2 plugin development using TurtleBot3 Waffle in Gazebo.
 
 ---
 
