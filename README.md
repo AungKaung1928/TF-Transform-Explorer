@@ -247,6 +247,13 @@ pkill -9 -f "gz sim"
 ```
 A stray `gz sim` server from a previous run shares the gz-transport bus with the new one and corrupts `/clock`, `/odom` and `/tf`.
 
+**RViz: `RobotModel` shows a red error and `TF` a warning on `wheel_left_link` / `wheel_right_link`:**
+```bash
+ros2 node list | grep joint_state_publisher   # must print nothing, this launch starts none
+pkill -9 -f joint_state_publisher
+```
+A stray `joint_state_publisher` (another project's launch left running on the same `ROS_DOMAIN_ID`) re-publishes the wheel joints with wall-clock stamps while the sim runs on sim time. `robot_state_publisher` forwards them, so tf2 reports "extrapolation into the past" for the wheel frames. After killing it press **Reset** (bottom left of RViz) or restart RViz: its tf buffer keeps the bad stamps until then. A clean start shows no RViz error (checked at 16, 24, 34 and 50 s after launch).
+
 **No `/camera/depth/points` log lines from `tf_monitor_node`:**
 Expected. The Burger model has no depth camera; the subscription stays idle. Add an RGB-D sensor to the xacro and a `sensor_msgs/PointCloud2` entry to `config/gz_bridge.yaml` if you want it.
 

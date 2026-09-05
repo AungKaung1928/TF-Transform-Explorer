@@ -8,6 +8,11 @@ OPERATIONAL FOOTGUN: `pkill -9 -f "gz sim"` before every relaunch; two gz server
 corrupt /clock /odom /tf.
 
 ## Solved
+- RViz RobotModel error + TF warning on wheel links during the first two verification runs was NOT
+  the port: three stale joint_state_publisher processes (Autoware-Simulation-Demo test, same domain
+  42) published wall-clock /joint_states. Reproduced on purpose with `ros2 run joint_state_publisher
+  joint_state_publisher`, cleared after kill + RViz Reset; fresh start clean at 16/24/34/50 s.
+  Recipe in README Troubleshooting.
 - HARMONIC PORT: turtlebot3_gazebo (Classic, EOL) replaced by ros_gz_sim gz_sim.launch.py +
   `create -topic /robot_description` + ros_gz_bridge. Robot = Burger xacro copied from
   ROS2-Nav2-Random-Explorer-Bot (DiffDrive, gpu_lidar 5 Hz, IMU). World = repo's own
