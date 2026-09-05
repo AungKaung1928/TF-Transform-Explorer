@@ -127,6 +127,7 @@ install(DIRECTORY
   config
   rviz
   worlds
+  description
   DESTINATION share/${PROJECT_NAME}
 )
 

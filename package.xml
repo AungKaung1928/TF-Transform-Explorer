@@ -3,7 +3,7 @@
 <package format="3">
   <name>tf_explorer</name>
   <version>1.1.0</version>
-  <description>TF Transform Explorer - Learning TF2, Nav2, SLAM, Custom Plugins</description>
+  <description>TF Transform Explorer - TF2, Nav2, SLAM and custom Nav2 plugins on TurtleBot3 in Gazebo Harmonic</description>
   <maintainer email="dev@example.com">Developer</maintainer>
   <license>MIT</license>
 
@@ -28,8 +28,11 @@
   <depend>nav2_costmap_2d</depend>
   <depend>pluginlib</depend>
 
-  <exec_depend>turtlebot3_gazebo</exec_depend>
-  <exec_depend>turtlebot3_navigation2</exec_depend>
+  <exec_depend>turtlebot3_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>slam_toolbox</exec_depend>
   <exec_depend>rviz2</exec_depend>

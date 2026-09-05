@@ -36,9 +36,10 @@ void TFMonitorNode::timer_callback()
   log_transform("base_link", "base_scan");
   log_transform("map", "base_link");
   
-  // Only check camera_link if it exists (Waffle model)
-  if (tf_buffer_->canTransform("base_link", "camera_link", tf2::TimePointZero, 
-                                tf2::durationFromSec(0.1))) {
+  // Waffle only: _frameExists first, canTransform on a missing frame spams tf2 warnings
+  if (tf_buffer_->_frameExists("camera_link") &&
+      tf_buffer_->canTransform("base_link", "camera_link", tf2::TimePointZero,
+                               tf2::durationFromSec(0.1))) {
     log_transform("base_link", "camera_link");
   }
 }

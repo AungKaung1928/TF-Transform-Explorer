@@ -1,6 +1,8 @@
 # TF Transform Explorer
 
-A ROS2 robotics project demonstrating TF2 transforms, SLAM mapping, Nav2 autonomous navigation, custom message types, and Nav2 plugin development using TurtleBot3 Waffle in Gazebo.
+A ROS2 robotics project demonstrating TF2 transforms, SLAM mapping, Nav2 autonomous navigation, custom message types, and Nav2 plugin development using TurtleBot3 Burger in **Gazebo Harmonic** (ROS 2 Humble, `ros_gz`).
+
+> Ported from Gazebo Classic (EOL) on 2026-09-05. The robot is now spawned from `description/turtlebot3_burger.urdf.xacro` via `ros_gz_sim create`, and `config/gz_bridge.yaml` bridges `/scan /odom /tf /joint_states /imu /clock /cmd_vel`. The `turtlebot3_gazebo` package is no longer required.
 
 ---
 
@@ -20,16 +22,22 @@ A ROS2 robotics project demonstrating TF2 transforms, SLAM mapping, Nav2 autonom
 
 ## Run
 
-Single command launches everything (Gazebo + SLAM + Nav2 + Custom Nodes + RViz):
+Single command launches everything (Gazebo Harmonic + SLAM + Nav2 + Custom Nodes + RViz):
 
 ```bash
 cd ~/tf_explorer_ws
-colcon build --packages-select tf_explorer
+colcon build --symlink-install --packages-select tf_explorer
 source install/setup.bash
 ros2 launch tf_explorer tf_explorer.launch.py
 ```
 
-Robot starts patrolling automatically after 15 seconds.
+Robot starts patrolling automatically about 25 seconds after launch (sim up at ~3 s, SLAM at 8 s, Nav2 at 10 s, patrol node waits a further 15 s).
+
+Kill any leftover simulator before relaunching, otherwise two `gz sim` servers share one bus and corrupt `/clock`, `/odom` and `/tf`:
+
+```bash
+pkill -9 -f "gz sim"
+```
 
 ---
 
@@ -75,6 +83,10 @@ Registered in `costmap_plugins.xml`:
 
 ```
 tf_explorer/
+├── description/
+│   └── turtlebot3_burger.urdf.xacro   # gz-sim DiffDrive + gpu_lidar + IMU plugins
+├── worlds/
+│   └── explorer_world.sdf             # 10 x 10 m arena, 3 obstacles (SDF 1.8)
 ├── msg/
 │   └── TFDiagnostics.msg
 ├── src/
@@ -90,7 +102,8 @@ tf_explorer/
 │   └── tf_explorer.launch.py
 ├── config/
 │   ├── nav2_params.yaml
-│   └── slam_params.yaml
+│   ├── slam_params.yaml
+│   └── gz_bridge.yaml                 # ros_gz_bridge topic map
 ├── rviz/
 │   └── tf_explorer.rviz
 ├── costmap_plugins.xml
@@ -103,10 +116,10 @@ tf_explorer/
 ## Clone & Build
 
 ```bash
-cd ~
-git clone https://github.com/YOUR_USERNAME/tf_explorer_ws.git
-cd tf_explorer_ws
-colcon build --packages-select tf_explorer
+mkdir -p ~/tf_explorer_ws/src && cd ~/tf_explorer_ws/src
+git clone https://github.com/AungKaung1928/TF-Transform-Explorer.git tf_explorer
+cd ~/tf_explorer_ws
+colcon build --symlink-install --packages-select tf_explorer
 source install/setup.bash
 ```
 
@@ -164,16 +177,34 @@ source install/setup.bash
 
 ## Prerequisites
 
+ROS 2 Humble + Gazebo Harmonic (`gz-harmonic` from the OSRF `gazebo-stable` apt repo). Gazebo Classic must **not** be installed alongside it (both ship `/usr/bin/gz`).
+
 ```bash
 sudo apt install -y \
-    ros-humble-turtlebot3-gazebo \
-    ros-humble-turtlebot3-navigation2 \
+    gz-harmonic \
+    ros-humble-ros-gzharmonic \
+    ros-humble-turtlebot3-description \
+    ros-humble-xacro \
     ros-humble-nav2-bringup \
     ros-humble-slam-toolbox
-
-echo 'export TURTLEBOT3_MODEL=waffle' >> ~/.bashrc
-source ~/.bashrc
 ```
+
+No `TURTLEBOT3_MODEL` environment variable is needed; the robot model is the xacro in `description/`.
+
+---
+
+## Measured Results (Gazebo Harmonic, 2026-09-05)
+
+Laptop: Ubuntu 22.04, ROS 2 Humble, gz-harmonic 8.15, Intel Iris Xe (no discrete GPU). Two runs of ~2 min each, all stages up, RTF ~1.
+
+| Signal | Value |
+|--------|-------|
+| `/scan` | 4.5–4.8 Hz (gpu_lidar configured at 5 Hz) |
+| `/odom` | 25–27 Hz |
+| `/cmd_vel` (Nav2 → sim) | 20.0 Hz |
+| Nav2 lifecycle | bt_navigator, controller, planner, behavior servers all `active` |
+| Patrol | 12 random goals reached in two 50 s sample windows, 0 aborts observed |
+| `/tf_diagnostics` | `map → odom`, `odom → base_link`, `map → base_link` all `is_healthy: true` |
 
 ---
 
@@ -210,10 +241,14 @@ ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
 
 ## Troubleshooting
 
-**Gazebo crashes:**
+**Gazebo crashes or robot stands still with a racing clock:**
 ```bash
-killall -9 gzserver gzclient
+pkill -9 -f "gz sim"
 ```
+A stray `gz sim` server from a previous run shares the gz-transport bus with the new one and corrupts `/clock`, `/odom` and `/tf`.
+
+**No `/camera/depth/points` log lines from `tf_monitor_node`:**
+Expected. The Burger model has no depth camera; the subscription stays idle. Add an RGB-D sensor to the xacro and a `sensor_msgs/PointCloud2` entry to `config/gz_bridge.yaml` if you want it.
 
 **Robot not moving:**
 - Wait 15+ seconds for Nav2 to fully activate
