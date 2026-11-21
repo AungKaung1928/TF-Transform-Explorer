@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    # README targets ROS 2 Humble on Ubuntu 22.04. Build-time dependencies only:
+    # Gazebo, RViz and Nav2 bringup are run-time and not needed to compile or test.
+    runs-on: ubuntu-latest
+    container: ros:humble
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src/tf_explorer
+      - name: rosdep (build, test)
+        run: |
+          apt-get update
+          rosdep update --rosdistro humble
+          rosdep install --from-paths src --ignore-src -y --rosdistro humble \
+            --dependency-types build --dependency-types build_export \
+            --dependency-types buildtool --dependency-types buildtool_export --dependency-types test
+      - name: colcon build
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --event-handlers console_direct+ --cmake-args -DCMAKE_BUILD_TYPE=Release
+      - name: colcon test
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose
