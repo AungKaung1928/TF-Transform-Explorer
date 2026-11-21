@@ -23,7 +23,6 @@ TFMonitorNode::TFMonitorNode() : Node("tf_monitor_node")
 
   pose_array_pub_ = create_publisher<geometry_msgs::msg::PoseArray>("/pose_history", 10);
   
-  pose_history_.header.frame_id = "map";
   
   RCLCPP_INFO(get_logger(), "TF Monitor Node started - tracking transforms");
 }
@@ -71,6 +70,8 @@ void TFMonitorNode::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
     pose_history_.poses.erase(pose_history_.poses.begin());
   }
   
+  // The poses are copied as they come, so they stay in the odometry message's frame.
+  pose_history_.header.frame_id = msg->header.frame_id;
   pose_history_.header.stamp = this->now();
   pose_array_pub_->publish(pose_history_);
 }
