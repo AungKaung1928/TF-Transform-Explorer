@@ -33,7 +33,7 @@ public:
                rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
       },
       [](std::shared_ptr<GoalHandle>) {return rclcpp_action::CancelResponse::ACCEPT;},
-      [](std::shared_ptr<GoalHandle> handle) {
+      [this](std::shared_ptr<GoalHandle> handle) {
         workers_.emplace_back(
           [handle]() {handle->succeed(std::make_shared<NavigateToPose::Result>());});
       });
