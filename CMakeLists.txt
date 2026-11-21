@@ -172,6 +172,12 @@ if(BUILD_TESTING)
   target_include_directories(test_simple_wiggle_recovery PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_simple_wiggle_recovery rclcpp geometry_msgs)
 
+  ament_add_gtest(test_frame_broadcaster_node
+    test/test_frame_broadcaster_node.cpp src/frame_broadcaster_node.cpp TIMEOUT 60)
+  target_compile_definitions(test_frame_broadcaster_node PRIVATE TF_EXPLORER_NO_MAIN)
+  target_include_directories(test_frame_broadcaster_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_frame_broadcaster_node ${NODE_DEPS})
+
   ament_add_gtest(test_patrol_node test/test_patrol_node.cpp TIMEOUT 120)
   target_include_directories(test_patrol_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_patrol_node rclcpp rclcpp_action nav2_msgs geometry_msgs)
