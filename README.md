@@ -1,5 +1,7 @@
 # TF Transform Explorer
 
+[![ci](https://github.com/AungKaung1928/TF-Transform-Explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/AungKaung1928/TF-Transform-Explorer/actions/workflows/ci.yml)
+
 A ROS2 robotics project demonstrating TF2 transforms, SLAM mapping, Nav2 autonomous navigation, custom message types, and Nav2 plugin development using TurtleBot3 Burger in **Gazebo Harmonic** (ROS 2 Humble, `ros_gz`).
 
 > Ported from Gazebo Classic (EOL) on 2026-09-05. The robot is now spawned from `description/turtlebot3_burger.urdf.xacro` via `ros_gz_sim create`, and `config/gz_bridge.yaml` bridges `/scan /odom /tf /joint_states /imu /clock /cmd_vel`. The `turtlebot3_gazebo` package is no longer required.
@@ -137,6 +139,14 @@ cd ~/tf_explorer_ws
 colcon build --symlink-install --packages-select tf_explorer
 source install/setup.bash
 ```
+
+Unit tests (KeepoutLayer cost marking: partly off-map zone, zone fully off the map, update-window bounds):
+
+```bash
+colcon test --packages-select tf_explorer && colcon test-result --verbose
+```
+
+CI runs the same build and tests in a `ros:humble` container on every push (`.github/workflows/ci.yml`).
 
 ---
 
