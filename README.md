@@ -134,7 +134,7 @@ tf_explorer/
 
 ```bash
 mkdir -p ~/tf_explorer_ws/src && cd ~/tf_explorer_ws/src
-git clone https://github.com/AungKaung1928/TF-Transform-Explorer.git tf_explorer
+git clone <this repo URL> tf_explorer
 cd ~/tf_explorer_ws
 colcon build --symlink-install --packages-select tf_explorer
 source install/setup.bash
