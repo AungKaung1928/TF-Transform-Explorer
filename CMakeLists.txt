@@ -83,6 +83,9 @@ ament_target_dependencies(simple_wiggle_recovery rclcpp geometry_msgs)
 
 # Patrol Node (autonomous navigation)
 add_executable(patrol_node src/patrol_node.cpp)
+target_include_directories(patrol_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(patrol_node rclcpp rclcpp_action nav2_msgs geometry_msgs)
 
 # ==============================================================================
@@ -149,6 +152,10 @@ if(BUILD_TESTING)
   ament_add_gtest(test_keepout_layer test/test_keepout_layer.cpp)
   target_link_libraries(test_keepout_layer keepout_layer)
   ament_target_dependencies(test_keepout_layer rclcpp nav2_costmap_2d)
+
+  ament_add_gtest(test_patrol_node test/test_patrol_node.cpp TIMEOUT 120)
+  target_include_directories(test_patrol_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_patrol_node rclcpp rclcpp_action nav2_msgs geometry_msgs)
 endif()
 
 ament_package()

@@ -152,14 +152,14 @@ CI runs the same build and tests in a `ros:humble` container on every push (`.gi
 
 ## Key Parameters to Modify
 
-### Patrol Node (`src/patrol_node.cpp`)
+### Patrol Node (`include/tf_explorer/patrol_node.hpp`)
 
 | Parameter | Line | Default | Description |
 |-----------|------|---------|-------------|
-| Startup delay | `std::chrono::seconds(15)` | 15s | Wait time before first goal |
+| Startup delay | ROS parameter `startup_delay` | 15s | Wait time before first goal |
 | Goal range X | `dis_x(-1.0, 1.0)` | -1.0 to 1.0 | Random X coordinate range |
 | Goal range Y | `dis_y(-1.0, 1.0)` | -1.0 to 1.0 | Random Y coordinate range |
-| Goal delay | `std::chrono::seconds(2)` | 2s | Pause between goals |
+| Goal delay | ROS parameter `retry_delay` | 2s | Pause between goals, and before a retry after a rejected goal or a missing Nav2 server (unit tests: `test/test_patrol_node.cpp`) |
 
 ### TF Anomaly Detector (`src/tf_anomaly_detector.cpp`)
 
