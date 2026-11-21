@@ -11,7 +11,7 @@ namespace tf_explorer
  * Simple "Wiggle" Recovery Node
  * 
  * Standalone node that wiggles the robot left-right.
- * Call via service or action when robot gets stuck.
+ * Starts wiggling as soon as it is run, then stops the robot.
  * 
  * This is a SIMPLIFIED version - demonstrates the concept
  * without complex Nav2 plugin inheritance.
@@ -22,7 +22,6 @@ public:
   SimpleWiggleRecovery();
 
 private:
-  void execute_wiggle();
   void timer_callback();
 
   // Publishers

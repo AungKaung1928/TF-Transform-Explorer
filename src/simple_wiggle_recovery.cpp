@@ -38,7 +38,16 @@ void SimpleWiggleRecovery::timer_callback()
     return;
   }
 
-  // Check if all wiggles done
+  // Check if current wiggle direction is done
+  double elapsed = (this->now() - wiggle_start_time_).seconds();
+  if (elapsed >= wiggle_duration_) {
+    wiggle_left_ = !wiggle_left_;
+    current_wiggle_++;
+    wiggle_start_time_ = this->now();
+    RCLCPP_DEBUG(this->get_logger(), "Switching direction, wiggle #%d", current_wiggle_);
+  }
+
+  // All wiggles done: checked after the switch, so no command goes out in a direction past the last one
   if (current_wiggle_ >= wiggle_count_ * 2) {
     RCLCPP_INFO(this->get_logger(), "Wiggle Recovery complete!");
 
@@ -50,15 +59,6 @@ void SimpleWiggleRecovery::timer_callback()
     return;
   }
 
-  // Check if current wiggle direction is done
-  double elapsed = (this->now() - wiggle_start_time_).seconds();
-  if (elapsed >= wiggle_duration_) {
-    wiggle_left_ = !wiggle_left_;
-    current_wiggle_++;
-    wiggle_start_time_ = this->now();
-    RCLCPP_DEBUG(this->get_logger(), "Switching direction, wiggle #%d", current_wiggle_);
-  }
-
   // Publish velocity
   geometry_msgs::msg::Twist cmd;
   cmd.angular.z = wiggle_left_ ? wiggle_speed_ : -wiggle_speed_;
@@ -67,6 +67,7 @@ void SimpleWiggleRecovery::timer_callback()
 
 }  // namespace tf_explorer
 
+#ifndef TF_EXPLORER_NO_MAIN   // defined by the unit test build
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -78,3 +79,4 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif
