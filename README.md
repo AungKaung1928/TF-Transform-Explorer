@@ -115,6 +115,8 @@ tf_explorer/
 │   └── keepout_layer.cpp
 ├── include/tf_explorer/
 │   └── [header files]
+├── test/
+│   └── [one gtest file per node and one for the keepout layer]
 ├── launch/
 │   └── tf_explorer.launch.py
 ├── config/
