@@ -34,3 +34,16 @@ TEST(KeepoutLayer, StaysInsideTheUpdateWindow)
   EXPECT_EQ(grid.getCost(15, 14), FREE_SPACE);
   EXPECT_EQ(grid.getCost(14, 15), FREE_SPACE);
 }
+
+// A zone with no overlap must not be clamped onto the map edge.
+TEST(KeepoutLayer, ZoneFullyOffMapDrawsNothing)
+{
+  Costmap2D grid(20, 20, 0.1, 3.0, 3.0, FREE_SPACE);  // [3.0, 5.0) m, zone is [1, 2] m
+  tf_explorer::KeepoutLayer layer;
+  layer.updateCosts(grid, 0, 0, 20, 20);
+  for (unsigned int j = 0; j < 20; ++j) {
+    for (unsigned int i = 0; i < 20; ++i) {
+      ASSERT_EQ(grid.getCost(i, j), FREE_SPACE) << i << "," << j;
+    }
+  }
+}

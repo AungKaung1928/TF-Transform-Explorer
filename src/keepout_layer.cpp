@@ -54,24 +54,29 @@ void KeepoutLayer::updateCosts(
     return;
   }
 
-  unsigned int zone_min_i, zone_min_j, zone_max_i, zone_max_j;
-
-  if (!master_grid.worldToMap(zone_min_x_, zone_min_y_, zone_min_i, zone_min_j)) {
+  // Clip the zone to the map: a zone that only partly overlaps (e.g. a rolling local
+  // costmap) must still be drawn, so do not drop it when a corner is off the map.
+  // A zone with no overlap at all draws nothing (clamping would paint the map edge).
+  const double ox = master_grid.getOriginX();
+  const double oy = master_grid.getOriginY();
+  if (zone_max_x_ < ox || zone_min_x_ >= ox + master_grid.getSizeInMetersX() ||
+    zone_max_y_ < oy || zone_min_y_ >= oy + master_grid.getSizeInMetersY())
+  {
     return;
   }
-  if (!master_grid.worldToMap(zone_max_x_, zone_max_y_, zone_max_i, zone_max_j)) {
-    return;
-  }
+  int zone_min_i, zone_min_j, zone_max_i, zone_max_j;
+  master_grid.worldToMapEnforceBounds(zone_min_x_, zone_min_y_, zone_min_i, zone_min_j);
+  master_grid.worldToMapEnforceBounds(zone_max_x_, zone_max_y_, zone_max_i, zone_max_j);
 
-  // Clamp to update bounds
-  zone_min_i = std::max(zone_min_i, static_cast<unsigned int>(min_i));
-  zone_min_j = std::max(zone_min_j, static_cast<unsigned int>(min_j));
-  zone_max_i = std::min(zone_max_i, static_cast<unsigned int>(max_i));
-  zone_max_j = std::min(zone_max_j, static_cast<unsigned int>(max_j));
+  // Clamp to the update window; its upper bounds are exclusive.
+  zone_min_i = std::max(zone_min_i, min_i);
+  zone_min_j = std::max(zone_min_j, min_j);
+  zone_max_i = std::min(zone_max_i, max_i - 1);
+  zone_max_j = std::min(zone_max_j, max_j - 1);
 
   // Mark keepout zone as LETHAL
-  for (unsigned int j = zone_min_j; j <= zone_max_j; j++) {
-    for (unsigned int i = zone_min_i; i <= zone_max_i; i++) {
+  for (int j = zone_min_j; j <= zone_max_j; j++) {
+    for (int i = zone_min_i; i <= zone_max_i; i++) {
       master_grid.setCost(i, j, nav2_costmap_2d::LETHAL_OBSTACLE);
     }
   }
