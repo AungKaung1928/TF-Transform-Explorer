@@ -85,6 +85,7 @@ void TFMonitorNode::pointcloud_callback(const sensor_msgs::msg::PointCloud2::Sha
 
 }  // namespace tf_explorer
 
+#ifndef TF_EXPLORER_NO_MAIN   // defined by the unit test build
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -92,3 +93,4 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

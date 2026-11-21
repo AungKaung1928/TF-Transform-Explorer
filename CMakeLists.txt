@@ -153,9 +153,9 @@ if(BUILD_TESTING)
   target_link_libraries(test_keepout_layer keepout_layer)
   ament_target_dependencies(test_keepout_layer rclcpp nav2_costmap_2d)
 
-  # The node source is compiled into the test; its main() is renamed out of gtest's way.
+  # The node source is compiled into the test without its main(): gtest brings its own.
   ament_add_gtest(test_tf_monitor_node test/test_tf_monitor_node.cpp src/tf_monitor_node.cpp TIMEOUT 60)
-  set_source_files_properties(src/tf_monitor_node.cpp PROPERTIES COMPILE_DEFINITIONS "main=tf_monitor_node_main")
+  target_compile_definitions(test_tf_monitor_node PRIVATE TF_EXPLORER_NO_MAIN)
   target_include_directories(test_tf_monitor_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_tf_monitor_node ${NODE_DEPS})
 
