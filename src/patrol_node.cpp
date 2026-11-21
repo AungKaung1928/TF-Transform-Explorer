@@ -29,7 +29,8 @@ private:
   void send_next_goal()
   {
     if (!client_->wait_for_action_server(std::chrono::seconds(5))) {
-      RCLCPP_ERROR(get_logger(), "Nav2 action server not available!");
+      RCLCPP_ERROR(get_logger(), "Nav2 action server not available, retrying...");
+      schedule_next_goal();
       return;
     }
 
@@ -57,16 +58,27 @@ private:
       } else {
         RCLCPP_WARN(get_logger(), "Goal failed, trying another...");
       }
-      // Send next goal after 2 seconds
-      goal_timer_ = create_wall_timer(
-        std::chrono::seconds(2),
-        [this]() {
-          goal_timer_->cancel();
-          send_next_goal();
-        });
+      schedule_next_goal();
+    };
+    // A rejected goal never reaches result_callback: without this the patrol stops for good.
+    options.goal_response_callback = [this](const auto & goal_handle) {
+      if (!goal_handle) {
+        RCLCPP_WARN(get_logger(), "Goal rejected, trying another...");
+        schedule_next_goal();
+      }
     };
 
     client_->async_send_goal(goal, options);
+  }
+
+  void schedule_next_goal()
+  {
+    goal_timer_ = create_wall_timer(
+      std::chrono::seconds(2),
+      [this]() {
+        goal_timer_->cancel();
+        send_next_goal();
+      });
   }
 
   rclcpp_action::Client<NavigateToPose>::SharedPtr client_;
