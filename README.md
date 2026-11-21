@@ -144,7 +144,7 @@ source install/setup.bash
 
 Unit tests, run in CI in a `ros:humble` container:
 
-- KeepoutLayer cost marking: partly off-map zone, zone fully off the map, update-window bounds
+- KeepoutLayer: cost marking (partly off-map zone, zone fully off the map, update-window bounds); enabled through Nav2's own flag; stays current after a costmap clear
 - TF anomaly detector on live `/tf`: missing, fresh, 1 m jump and 5 s stale `map -> odom`
 - Patrol node against a fake `navigate_to_pose` server: goes on after a rejected goal, a finished goal and a late server
 - TF monitor: `/pose_history` carries the odometry frame

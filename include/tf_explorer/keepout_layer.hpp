@@ -17,7 +17,9 @@ namespace tf_explorer
 class KeepoutLayer : public nav2_costmap_2d::Layer
 {
 public:
-  KeepoutLayer() = default;
+  // enabled_ is the base Layer's flag (LayeredCostmap reads it through isEnabled()); the
+  // base constructor sets it false, so the layer's default has to be set here.
+  KeepoutLayer() {enabled_ = true;}
   virtual ~KeepoutLayer() = default;
 
   void onInitialize() override;
@@ -30,7 +32,10 @@ public:
     nav2_costmap_2d::Costmap2D & master_grid,
     int min_i, int min_j, int max_i, int max_j) override;
 
-  void reset() override { current_ = false; }
+  // The zone comes from parameters, not sensor data, so there is nothing to wait for: stay
+  // current. Nav2's clear_entirely service resets every layer and the planner and controller
+  // wait on isCurrent(); false here would block them for good.
+  void reset() override {current_ = true;}
 
   bool isClearable() override { return false; }
 
@@ -39,7 +44,6 @@ private:
   double zone_max_x_{2.0};
   double zone_min_y_{1.0};
   double zone_max_y_{2.0};
-  bool enabled_{true};
 };
 
 }  // namespace tf_explorer

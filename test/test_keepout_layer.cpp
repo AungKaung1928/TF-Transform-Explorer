@@ -47,3 +47,19 @@ TEST(KeepoutLayer, ZoneFullyOffMapDrawsNothing)
     }
   }
 }
+
+// The enabled flag must be the one Nav2 reads (Layer::isEnabled), not a private copy.
+TEST(KeepoutLayer, EnabledByDefaultThroughTheBaseFlag)
+{
+  tf_explorer::KeepoutLayer layer;
+  EXPECT_TRUE(layer.isEnabled());
+}
+
+// Nav2's clear_entirely service calls reset() on every layer; the planner and controller
+// then wait for isCurrent(). A parameter-only layer must stay current.
+TEST(KeepoutLayer, StaysCurrentAfterReset)
+{
+  tf_explorer::KeepoutLayer layer;
+  layer.reset();
+  EXPECT_TRUE(layer.isCurrent());
+}
