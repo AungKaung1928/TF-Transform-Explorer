@@ -144,4 +144,11 @@ pluginlib_export_plugin_description_file(nav2_costmap_2d costmap_plugins.xml)
 ament_export_include_directories(include)
 ament_export_libraries(keepout_layer)
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_keepout_layer test/test_keepout_layer.cpp)
+  target_link_libraries(test_keepout_layer keepout_layer)
+  ament_target_dependencies(test_keepout_layer rclcpp nav2_costmap_2d)
+endif()
+
 ament_package()
