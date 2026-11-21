@@ -159,6 +159,13 @@ if(BUILD_TESTING)
   target_include_directories(test_tf_monitor_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_tf_monitor_node ${NODE_DEPS})
 
+  ament_add_gtest(test_tf_anomaly_detector
+    test/test_tf_anomaly_detector.cpp src/tf_anomaly_detector.cpp TIMEOUT 120)
+  target_compile_definitions(test_tf_anomaly_detector PRIVATE TF_EXPLORER_NO_MAIN)
+  target_include_directories(test_tf_anomaly_detector PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_tf_anomaly_detector ${NODE_DEPS})
+  target_link_libraries(test_tf_anomaly_detector "${cpp_typesupport_target}")
+
   ament_add_gtest(test_patrol_node test/test_patrol_node.cpp TIMEOUT 120)
   target_include_directories(test_patrol_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_patrol_node rclcpp rclcpp_action nav2_msgs geometry_msgs)
