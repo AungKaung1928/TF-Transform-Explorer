@@ -74,8 +74,23 @@ bool jump_detected
 
 Registered in `costmap_plugins.xml`:
 ```xml
-<class name="tf_explorer/KeepoutLayer" type="tf_explorer::KeepoutLayer" base_class_type="nav2_costmap_2d::Layer"/>
+<class type="tf_explorer::KeepoutLayer" base_class_type="nav2_costmap_2d::Layer"/>
 ```
+
+The layer is built and exported but not enabled in `config/nav2_params.yaml`. To use it, add it to a costmap's plugin list (here the global costmap):
+```yaml
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      plugins: ["static_layer", "obstacle_layer", "keepout_layer", "inflation_layer"]
+      keepout_layer:
+        plugin: "tf_explorer::KeepoutLayer"
+        zone_min_x: 1.0
+        zone_max_x: 2.0
+        zone_min_y: 1.0
+        zone_max_y: 2.0
+```
+A zone that only partly overlaps the costmap is clipped to it, and the layer writes only inside the update window it is given (unit tests: `test/test_keepout_layer.cpp`).
 
 ---
 
@@ -153,10 +168,11 @@ source install/setup.bash
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `zone_min_x` | -0.5 | Keepout zone X start |
-| `zone_max_x` | 0.5 | Keepout zone X end |
-| `zone_min_y` | -0.5 | Keepout zone Y start |
-| `zone_max_y` | 0.5 | Keepout zone Y end |
+| `enabled` | true | Turn the layer on or off |
+| `zone_min_x` | 1.0 | Keepout zone X start (m) |
+| `zone_max_x` | 2.0 | Keepout zone X end (m) |
+| `zone_min_y` | 1.0 | Keepout zone Y start (m) |
+| `zone_max_y` | 2.0 | Keepout zone Y end (m) |
 
 ### Nav2 (`config/nav2_params.yaml`)
 
