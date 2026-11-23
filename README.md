@@ -26,13 +26,13 @@ Ubuntu 22.04, ROS 2 Humble, Gazebo Harmonic (`gz-harmonic` from the OSRF `gazebo
 sudo apt install -y gz-harmonic ros-humble-ros-gzharmonic ros-humble-turtlebot3-description \
     ros-humble-xacro ros-humble-nav2-bringup ros-humble-slam-toolbox   # first time only
 mkdir -p ~/tf_explorer_ws/src && cd ~/tf_explorer_ws/src
-git clone <this repo URL> tf_explorer
+git clone https://github.com/AungKaung1928/TF-Transform-Explorer.git tf_explorer
 cd ~/tf_explorer_ws
 colcon build --symlink-install --packages-select tf_explorer
 source install/setup.bash
 ros2 launch tf_explorer tf_explorer.launch.py
-# Gazebo + RViz open; the robot starts patrolling about 25 s after launch
-# (sim ~3 s, SLAM 8 s, Nav2 10 s, patrol waits 15 s more).
+# Gazebo + RViz open; the robot starts patrolling about 24 s after launch
+# (spawn 3 s, SLAM 8 s, own nodes 9 s, Nav2 10 s, RViz 12 s; patrol_node then waits startup_delay 15 s).
 ```
 
 Before relaunching, `pkill -9 -f "gz sim"`: two `gz sim` servers on one bus corrupt `/clock`, `/odom` and `/tf`.
