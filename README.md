@@ -55,6 +55,10 @@ CI runs the build and these gtests in a `ros:humble` container on every push:
 
 ## How it works
 
+![TF tree: map -> odom (slam_toolbox) -> base_footprint (Gazebo diff-drive) -> base_link -> wheels, caster, imu, base_scan (robot_state_publisher) and sensor_mount -> rotating_sensor (frame_broadcaster_node)](docs/tf_tree.svg)
+
+The tree as configured: `scripts/plot_tf_tree.py` reads it from the SLAM config, the URDF and the broadcaster source, and CI fails if the figure and the code disagree. Not a recorded `view_frames`.
+
 | Node | Purpose |
 |------|---------|
 | `tf_monitor_node` | Logs TF transforms every 2 seconds |

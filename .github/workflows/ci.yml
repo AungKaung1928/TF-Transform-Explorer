@@ -34,3 +34,8 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
+      - name: TF tree figure matches the code
+        run: |
+          cd src/tf_explorer
+          python3 scripts/plot_tf_tree.py
+          git diff --exit-code docs/tf_tree.svg
