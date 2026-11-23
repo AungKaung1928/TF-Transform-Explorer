@@ -166,6 +166,13 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_tf_anomaly_detector ${NODE_DEPS})
   target_link_libraries(test_tf_anomaly_detector "${cpp_typesupport_target}")
 
+  ament_add_gtest(test_tf_lab_missing_link
+    test/test_tf_lab_missing_link.cpp src/tf_anomaly_detector.cpp TIMEOUT 60)
+  target_compile_definitions(test_tf_lab_missing_link PRIVATE TF_EXPLORER_NO_MAIN)
+  target_include_directories(test_tf_lab_missing_link PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_tf_lab_missing_link ${NODE_DEPS})
+  target_link_libraries(test_tf_lab_missing_link "${cpp_typesupport_target}")
+
   ament_add_gtest(test_simple_wiggle_recovery
     test/test_simple_wiggle_recovery.cpp src/simple_wiggle_recovery.cpp TIMEOUT 60)
   target_compile_definitions(test_simple_wiggle_recovery PRIVATE TF_EXPLORER_NO_MAIN)
