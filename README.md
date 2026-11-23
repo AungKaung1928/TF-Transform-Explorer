@@ -47,6 +47,7 @@ CI runs the build and these gtests in a `ros:humble` container on every push:
 
 - KeepoutLayer: cost marking (partly off-map zone, zone fully off the map, update-window bounds); enabled through Nav2's own flag; stays current after a costmap clear
 - TF anomaly detector on live `/tf`: missing, fresh, 1 m jump and 5 s stale `map -> odom`
+- TF lab (`test_tf_lab_missing_link`): without `odom -> base_link`, `map -> odom` stays healthy and `map -> base_link` is MISSING; broadcasting it makes the chain healthy
 - Patrol node against a fake `navigate_to_pose` server: goes on after a rejected goal, a finished goal and a late server
 - TF monitor: `/pose_history` carries the odometry frame
 - Wiggle recovery on `/cmd_vel`: alternates, ends on the last right turn, then stops
