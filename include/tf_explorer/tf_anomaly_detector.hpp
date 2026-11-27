@@ -21,7 +21,7 @@ namespace tf_explorer
 class TFAnomalyDetector : public rclcpp::Node
 {
 public:
-  TFAnomalyDetector();
+  explicit TFAnomalyDetector(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
 
 private:
   void check_transforms();

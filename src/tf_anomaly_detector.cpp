@@ -1,10 +1,12 @@
 #include "tf_explorer/tf_anomaly_detector.hpp"
 #include <cmath>
+#include <stdexcept>
 
 namespace tf_explorer
 {
 
-TFAnomalyDetector::TFAnomalyDetector() : Node("tf_anomaly_detector")
+TFAnomalyDetector::TFAnomalyDetector(const rclcpp::NodeOptions & options)
+: Node("tf_anomaly_detector", options)
 {
   // Declare parameters
   this->declare_parameter("max_transform_age", 1.0);
@@ -12,6 +14,10 @@ TFAnomalyDetector::TFAnomalyDetector() : Node("tf_anomaly_detector")
   
   max_transform_age_ = this->get_parameter("max_transform_age").as_double();
   max_position_jump_ = this->get_parameter("max_position_jump").as_double();
+  // A threshold <= 0 would flag every lookup as stale or jumping: refuse it at start-up.
+  if (!(max_transform_age_ > 0.0) || !(max_position_jump_ > 0.0)) {
+    throw std::invalid_argument("max_transform_age and max_position_jump must be > 0");
+  }
   
   // Initialize TF
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
@@ -110,4 +111,13 @@ TEST_F(TFAnomalyDetectorTest, OldTransformIsStale)
   EXPECT_FALSE(stale->is_healthy);
   EXPECT_GT(stale->transform_age_seconds, 1.0);
   EXPECT_EQ(stale->status_message.rfind("STALE", 0), 0u) << stale->status_message;
+}
+
+TEST_F(TFAnomalyDetectorTest, NonPositiveThresholdIsRefused)
+{
+  for (const char * name : {"max_transform_age", "max_position_jump"}) {
+    rclcpp::NodeOptions opts;
+    opts.parameter_overrides({rclcpp::Parameter(name, 0.0)});
+    EXPECT_THROW(tf_explorer::TFAnomalyDetector{opts}, std::invalid_argument) << name;
+  }
 }
